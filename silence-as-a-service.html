@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Silence as a Service — Premium Inbox Shield Utility</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #08080E;
+    --surface:  #0F0F1A;
+    --card:     #13131F;
+    --border:   #1E1E30;
+    --purple:   #7C3AED;
+    --purple-lt:#9D5CF5;
+    --mint:     #06EFA8;
+    --mint-dim: rgba(6,239,168,0.12);
+    --red:      #FF4558;
+    --text:     #F0F0F5;
+    --muted:    #6B6B85;
+    --sub:      #9898B0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ─────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ───────────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    height: 64px;
+    background: rgba(8,8,14,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--mint);
+    box-shadow: 0 0 10px var(--mint);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--mint); }
+    50% { opacity: 0.5; box-shadow: 0 0 4px var(--mint); }
+  }
+
+  .nav-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(124,58,237,0.2);
+    color: var(--purple-lt);
+    border: 1px solid rgba(124,58,237,0.3);
+    letter-spacing: 0.05em;
+  }
+
+  .nav-right { display: flex; align-items: center; gap: 1rem; }
+
+  .nav-link {
+    font-size: 0.85rem;
+    color: var(--sub);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-link:hover { color: var(--text); }
+
+  .btn-ghost {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--sub);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+
+  /* ── HERO ──────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem clamp(1.5rem, 5vw, 4rem) 5rem;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(ellipse at center, rgba(124,58,237,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-glow-2 {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 300px;
+    background: radial-gradient(ellipse at center, rgba(6,239,168,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--mint);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: '';
+    display: block;
+    height: 1px;
+    width: 40px;
+    background: var(--mint);
+    opacity: 0.4;
+  }
+
+  h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2.6rem, 7vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    max-width: 900px;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--purple-lt) 0%, var(--mint) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--sub);
+    max-width: 560px;
+    margin-bottom: 3rem;
+    font-weight: 400;
+    line-height: 1.7;
+  }
+
+  /* ── THREAT COUNTER ────────────────────────────────────── */
+  .threat-widget {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid rgba(255,69,88,0.35);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+    background: rgba(255,69,88,0.05);
+  }
+  .threat-label {
+    padding: 10px 16px;
+    background: rgba(255,69,88,0.12);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-right: 1px solid rgba(255,69,88,0.25);
+  }
+  .threat-blink {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .threat-count {
+    padding: 10px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .threat-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* ── CTA BUTTONS ───────────────────────────────────────── */
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 14px 28px;
+    background: var(--purple);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  }
+  .btn-primary:hover { background: var(--purple-lt); transform: translateY(-1px); box-shadow: 0 8px 30px rgba(124,58,237,0.4); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 14px 24px;
+    background: transparent;
+    color: var(--sub);
+    font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+
+  .hero-disclaimer {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .hero-disclaimer span { color: var(--mint); }
+
+  /* ── SECTION UTILS ─────────────────────────────────────── */
+  section { position: relative; z-index: 1; }
+
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-sub {
+    color: var(--sub);
+    font-size: 1rem;
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+  }
+
+  .pad { padding: 6rem 0; }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* ── HOW IT WORKS ──────────────────────────────────────── */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 3rem;
+  }
+
+  .step-card {
+    background: var(--card);
+    padding: 2rem;
+    transition: background 0.2s;
+  }
+  .step-card:hover { background: var(--surface); }
+
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--purple);
+    letter-spacing: 0.12em;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .step-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .step-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .step-body { font-size: 0.875rem; color: var(--sub); line-height: 1.7; }
+
+  /* ── PRICING ───────────────────────────────────────────── */
+  .pricing-section { padding: 6rem 0; }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 640px) {
+    .pricing-grid { grid-template-columns: 1fr; }
+    nav .nav-link { display: none; }
+  }
+
+  .pricing-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    transition: transform 0.2s;
+  }
+  .pricing-card:hover { transform: translateY(-3px); }
+
+  .pricing-card.featured {
+    border-color: var(--purple);
+    background: linear-gradient(160deg, rgba(124,58,237,0.1), var(--card));
+  }
+
+  .pricing-card.featured::before {
+    content: 'RECOMMENDED';
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--purple);
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 3px 12px;
+    border-radius: 4px;
+  }
+
+  .plan-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sub);
+    margin-bottom: 1.25rem;
+  }
+
+  .plan-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.03em;
+  }
+
+  .plan-price sup { font-size: 1.2rem; vertical-align: super; }
+  .plan-price.free { color: var(--red); }
+  .plan-price.paid { color: var(--mint); }
+
+  .plan-period {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .plan-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .plan-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--sub);
+    line-height: 1.5;
+  }
+
+  .feature-icon { flex-shrink: 0; margin-top: 1px; }
+  .feature-icon.yes { color: var(--mint); }
+  .feature-icon.no  { color: var(--red); }
+
+  .plan-cta {
+    display: block;
+    width: 100%;
+    margin-top: 1.75rem;
+    padding: 13px;
+    text-align: center;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .cta-free {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--sub);
+  }
+  .cta-free:hover { border-color: var(--red); color: var(--red); }
+
+  .cta-paid {
+    background: var(--purple);
+    color: #fff;
+  }
+  .cta-paid:hover { background: var(--purple-lt); box-shadow: 0 6px 24px rgba(124,58,237,0.45); transform: translateY(-1px); }
+
+  /* ── WALL OF IMMUNITY ──────────────────────────────────── */
+  .immunity-section { padding: 6rem 0; }
+
+  .immunity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .immunity-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    transition: all 0.2s;
+  }
+  .immunity-card:hover { border-color: rgba(6,239,168,0.3); background: rgba(6,239,168,0.04); }
+
+  .immunity-initials {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+  }
+
+  .immunity-role {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .immunity-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--mint);
+    letter-spacing: 0.08em;
+  }
+  .immunity-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--mint);
+  }
+
+  /* ── FAQ ───────────────────────────────────────────────── */
+  .faq-section { padding: 6rem 0; }
+
+  .faq-list {
+    margin-top: 2.5rem;
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  details {
+    background: var(--card);
+    transition: background 0.2s;
+  }
+  details[open] { background: var(--surface); }
+  details + details { border-top: 1px solid var(--border); }
+
+  summary {
+    padding: 1.25rem 1.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    gap: 1rem;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.01em;
+  }
+  summary::-webkit-details-marker { display: none; }
+
+  summary::after {
+    content: '+';
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  details[open] summary::after {
+    content: '−';
+    color: var(--purple-lt);
+  }
+
+  .faq-body {
+    padding: 0 1.5rem 1.25rem;
+    font-size: 0.875rem;
+    color: var(--sub);
+    line-height: 1.8;
+  }
+
+  /* ── MARQUEE TICKER ────────────────────────────────────── */
+  .ticker-wrap {
+    overflow: hidden;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    margin: 4rem 0;
+    position: relative;
+  }
+  .ticker-wrap::before, .ticker-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 80px;
+    z-index: 2;
+  }
+  .ticker-wrap::before { left: 0; background: linear-gradient(90deg, var(--surface), transparent); }
+  .ticker-wrap::after  { right: 0; background: linear-gradient(-90deg, var(--surface), transparent); }
+
+  .ticker-track {
+    display: flex;
+    gap: 3rem;
+    animation: marquee 28s linear infinite;
+    width: max-content;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  .ticker-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+  }
+  .ticker-item .sep { color: var(--border); }
+  .ticker-item .accent { color: var(--mint); }
+
+  /* ── FOOTER ────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: -0.02em;
+  }
+
+  .footer-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* ── MODAL ─────────────────────────────────────────────── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(6px);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    animation: modal-in 0.25s ease;
+  }
+  @keyframes modal-in {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .modal-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+  }
+  .modal-body { font-size: 0.875rem; color: var(--sub); line-height: 1.7; margin-bottom: 1.5rem; }
+  .modal-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--mint);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.04em;
+  }
+  .modal-close {
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+  }
+  .modal-close:hover { background: var(--purple-lt); }
+
+  /* ── FREE TIER MODAL ───────────────────────────────────── */
+  .modal.danger { border-color: rgba(255,69,88,0.4); }
+  .modal.danger .modal-title { color: var(--red); }
+  .modal.danger .modal-code { color: var(--red); border-color: rgba(255,69,88,0.3); }
+  .modal.success { border-color: rgba(6,239,168,0.3); }
+
+  /* ── SCROLL ANIMATION ──────────────────────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-dot"></div>
+    SaaS™
+    <span class="nav-badge">v2.0.26</span>
+  </div>
+  <div class="nav-right">
+    <a href="#how-it-works" class="nav-link">How It Works</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="#wall" class="nav-link">Wall of Immunity</a>
+    <button class="btn-ghost" onclick="openModal('free')">Enterprise (Don't)</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="hero-eyebrow">Silence as a Service</div>
+
+  <h1>The world's first<br /><em>inbox-shield utility.</em></h1>
+
+  <p class="hero-sub">
+    I have the coding skills to automate hundreds of AI-driven startup pitches directly to your inbox. For just $1, I will never use them.
+  </p>
+
+  <div class="threat-widget">
+    <div class="threat-label">
+      <div class="threat-blink"></div>
+      Manifestos Queued
+    </div>
+    <div class="threat-count">
+      <span id="counter">0</span>
+      <span class="threat-sub">targeting<br/>your inbox</span>
+    </div>
+  </div>
+
+  <div class="hero-ctas">
+    <a href="#pricing" class="btn-primary">
+      🛡️ Secure My Immunity for $1
+    </a>
+    <a href="#how-it-works" class="btn-secondary">
+      See what you're avoiding →
+    </a>
+  </div>
+
+  <p class="hero-disclaimer">
+    <span>✓</span> No pitch decks &nbsp;|&nbsp; <span>✓</span> No "quick calls" &nbsp;|&nbsp; <span>✓</span> No blockchain lawn mower updates
+  </p>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker"></div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="pad">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">The Process</div>
+      <div class="section-title">Disturbingly simple.</div>
+      <p class="section-sub">Our proprietary two-tier protection architecture has been engineered over an entire weekend.</p>
+    </div>
+    <div class="steps-grid reveal">
+      <div class="step-card">
+        <div class="step-num">Step 01</div>
+        <span class="step-icon">🤖</span>
+        <div class="step-title">I Write the Manifesto</div>
+        <p class="step-body">My automation pipeline generates a 4,000-word document on decentralized solutions to problems that do not exist. It is formatted. It has charts. It cites a Medium post from 2019.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 02</div>
+        <span class="step-icon">📬</span>
+        <div class="step-title">You Receive It</div>
+        <p class="step-body">If you remain on the Free Tier, our proprietary delivery engine (Gmail) forwards the complete document to your inbox every Tuesday at 9:03 AM. Persistently.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 03</div>
+        <span class="step-icon">🔕</span>
+        <div class="step-title">Or You Don't</div>
+        <p class="step-body">Premium Immunity holders are removed from our targeting list immediately. You receive nothing from me. Ever. That is the product. That is the whole product.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRICING -->
+<section id="pricing" class="pricing-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center; margin-bottom:0;">
+      <div class="section-eyebrow" style="justify-content:center; display:flex;">Pricing</div>
+      <div class="section-title">Two tiers. One sane choice.</div>
+      <p class="section-sub" style="margin:0 auto;">We keep the pricing transparent. One option costs $0. The other costs $1. The math is not complicated.</p>
+    </div>
+    <div class="pricing-grid reveal">
+
+      <!-- FREE TIER -->
+      <div class="pricing-card">
+        <div class="plan-name">Free Tier</div>
+        <div class="plan-price free"><sup>$</sup>0</div>
+        <div class="plan-period">/ rest of 2026</div>
+
+        <div class="plan-divider"></div>
+
+        <div class="plan-feature">
+          <span class="feature-icon no">✗</span>
+          <span>Eligible for 4,000-word manifesto on blockchain lawn mowers</span>
+        </div>
+        <div class="plan-feature">
+          <span class="feature-icon no">✗</span>
+          <span>Weekly AI-generated pitch decks with Comic Sans slide titles</span>
+        </div>
+        <div class="plan-feature">
+          <span class="feature-icon no">✗</span>
+          <span>LinkedIn connection request with custom "thought leadership" message</span>
+        </div>
+        <div class="plan-feature">
+          <span class="feature-icon no">✗</span>
+          <span>Surprise "quick 15-minute call" invites on Friday afternoons</span>
+        </div>
+        <div class="plan-feature">
+          <span class="feature-icon no">✗</span>
+          <span>NFT whitepaper for a startup called PetRock.io (20 pages)</span>
+        </div>
+
+        <button class="plan-cta cta-free" onclick="openModal('free')">Remain Unprotected</button>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="pricing-card featured">
+        <div class="plan-name">Premium Immunity</div>
+        <div class="plan-price paid"><sup>$</sup>1</div>
+        <div class="plan-period">/ one-time payment</div>
+
+        <div class="plan-divider"></div>
+
+        <div class="plan-feature">
+          <span class="feature-icon yes">✓</span>
+          <span>Permanent removal from all manifesto delivery queues</span>
+        </div>
+        <div class="plan-feature">
+          <span class="feature-icon yes">✓</span>
+          <span>Zero LinkedIn activity directed at your profile. Guaranteed.</span>
+        </div>
+        <div class="plan-feature">
+          <span class="feature-icon yes">✓</span>
+          <span>No pitch decks, cold emails, or "ecosystem synergy" vocabulary</span>
+        </div>
+        <div class="plan-feature">
+          <span class="feature-icon yes">✓</span>
+          <span>Immunity certificate with your name on it (real PDF, actual joke)</span>
+        </div>
+        <div class="plan-feature">
+          <span class="feature-icon yes">✓</span>
+          <span>Eternal digital silence. Enforced at the SMTP level.</span>
+        </div>
+
+        <button class="plan-cta cta-paid" onclick="openModal('paid')">Secure My Immunity — $1</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WALL OF IMMUNITY -->
+<section id="wall" class="immunity-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-eyebrow">Wall of Immunity</div>
+      <div class="section-title">Protected. At last.</div>
+      <p class="section-sub">These individuals made the rational decision. Their inboxes rest easy.</p>
+    </div>
+    <div class="immunity-grid reveal" id="immunity-grid"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-eyebrow" style="display:flex;justify-content:center;">FAQ</div>
+      <div class="section-title">Reasonable questions.<br/>Unreasonable answers.</div>
+    </div>
+    <div class="faq-list reveal">
+      <details>
+        <summary>Is this legal?</summary>
+        <div class="faq-body">Technically, yes. Ethically, it exists in an interesting grey area that three law professors and a Reddit thread have been unable to conclusively resolve. The $1 is for a legitimate service: silence. You are not paying for a product. You are paying for the absence of one.</div>
+      </details>
+      <details>
+        <summary>What actually happens if I pay?</summary>
+        <div class="faq-body">Your name is added to a spreadsheet titled "Do Not Disturb.xlsx". The column next to your name says "PROTECTED". I check this spreadsheet before sending anything. This is the entire technical infrastructure of Premium Immunity.</div>
+      </details>
+      <details>
+        <summary>What is the blockchain lawn mower startup about?</summary>
+        <div class="faq-body">GrassMint™ is a decentralized autonomous lawn care protocol that tokenizes grass clippings as proof-of-mow. Each clipping is an NFT. The whitepaper is 31 pages. The market cap is theoretical. I am threatening to send you all 31 pages unless you act now.</div>
+      </details>
+      <details>
+        <summary>Can I upgrade from Free Tier after receiving the manifesto?</summary>
+        <div class="faq-body">Yes, but the manifesto has already been delivered. You will carry the memory of GrassMint™ with you. The $1 only prevents future documents. It cannot undo the psychological damage already sustained.</div>
+      </details>
+      <details>
+        <summary>Do you actually have my email address?</summary>
+        <div class="faq-body">If you are reading this page, there is a nonzero chance that yes, I do. Hunter.io is a remarkable tool. So is Apollo.io. Both have free tiers. I am, after all, a computer science student who studies these things for coursework.</div>
+      </details>
+      <details>
+        <summary>Is there an enterprise tier?</summary>
+        <div class="faq-body">Enterprise Immunity covers your entire portfolio company roster for $47/month plus a mandatory "strategic alignment call" that I will not show up to, because you are paying me to not show up to things. We are working through the philosophical implications.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SaaS™ — Silence as a Service</div>
+  <div class="footer-note">
+    No VCs were harmed in the making of this website.<br />
+    © 2026 · Chief Immunity Officer · Est. One Weekend
+  </div>
+</footer>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-free" onclick="if(event.target===this)closeModal('free')">
+  <div class="modal danger">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">Unprotected Status Confirmed</div>
+    <div class="modal-body">You have elected to remain on the Free Tier. This is your choice. I respect it. <br/><br/>The GrassMint™ whitepaper will arrive Tuesday. It is 31 pages. There are diagrams.</div>
+    <div class="modal-code">STATUS: THREAT_LEVEL_MAXIMUM // manifesto_queue.push(you)</div>
+    <button class="modal-close" onclick="closeModal('free'); document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">
+      Wait — I Changed My Mind
+    </button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-paid" onclick="if(event.target===this)closeModal('paid')">
+  <div class="modal success">
+    <div class="modal-icon">🛡️</div>
+    <div class="modal-title">Immunity Secured</div>
+    <div class="modal-body">An excellent, rational, $1 decision. You will now be redirected to a payment page where you can complete your protection. Your name will be added to the Wall of Immunity within 24 hours.</div>
+    <div class="modal-code">STATUS: PROTECTED // manifesto_queue.remove(you)</div>
+    <button class="modal-close" onclick="window.open('www.paypal.com/ncp/payment/BE98S8RJWW5MU', '_blank')">
+      Complete Payment — $1
+    </button>
+  </div>
+</div>
+
+<script>
+  /* ── THREAT COUNTER ──────────────────────────────────── */
+  const target = 1247 + Math.floor(Math.random() * 300);
+  const el = document.getElementById('counter');
+  let current = Math.floor(target * 0.6);
+
+  const tick = () => {
+    if (current < target) {
+      current += Math.floor(Math.random() * 3) + 1;
+      if (current > target) current = target;
+      el.textContent = current.toLocaleString();
+      setTimeout(tick, 80 + Math.random() * 60);
+    }
+  };
+  setTimeout(tick, 600);
+
+  // Slow drip after initial count-up
+  setInterval(() => {
+    const n = parseInt(el.textContent.replace(/,/g, ''));
+    el.textContent = (n + 1).toLocaleString();
+  }, 4800);
+
+  /* ── TICKER ──────────────────────────────────────────── */
+  const items = [
+    { label: 'GrassMint™ Whitepaper', note: '31 pages · Queued' },
+    { label: 'PetRock.io NFT Drop', note: 'Series A · Imminent' },
+    { label: 'Blockchain Lawnmowers', note: 'Manifesto · Draft 4' },
+    { label: 'AirBnB for Socks™', note: 'Pitch Deck · 47 slides' },
+    { label: 'Uber but for Thinking', note: 'Concept Note · Ready' },
+    { label: 'Web3 Napkins', note: 'Token Model · Pending' },
+    { label: 'AI-Powered Silence', note: 'Meta · Ironic' },
+    { label: 'DAO for Breakfast', note: 'Governance · Draft' },
+    { label: 'DeFi Lawn Care', note: 'Series Seed · $0 raised' },
+  ];
+
+  const track = document.getElementById('ticker');
+  const doubled = [...items, ...items]; // seamless loop
+  doubled.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'ticker-item';
+    div.innerHTML = `<span class="accent">▸</span>${item.label}<span class="sep">|</span>${item.note}`;
+    track.appendChild(div);
+  });
+
+  /* ── WALL OF IMMUNITY ────────────────────────────────── */
+  const protected_list = [
+    { i: 'M.A.', role: 'Seed Investor', joined: '3d ago' },
+    { i: 'P.G.',  role: 'Y Combinator Partner', joined: '5d ago' },
+    { i: 'S.H.',  role: 'Angel Investor', joined: '1w ago' },
+    { i: 'B.C.',  role: 'Tech Founder', joined: '1w ago' },
+    { i: 'R.K.',  role: 'VC Partner', joined: '2w ago' },
+    { i: 'A.V.',  role: 'General Partner', joined: '2w ago' },
+    { i: 'T.N.',  role: 'Crypto Creator', joined: '2w ago' },
+    { i: 'J.L.',  role: 'Former CTO', joined: '3w ago' },
+    { i: 'D.M.',  role: 'Angel / Operator', joined: '3w ago' },
+    { i: 'K.S.',  role: 'Founder & CEO', joined: '1mo ago' },
+    { i: 'E.W.',  role: 'Managing Partner', joined: '1mo ago' },
+    { i: 'C.R.',  role: 'Portfolio Company', joined: '1mo ago' },
+  ];
+
+  const grid = document.getElementById('immunity-grid');
+  protected_list.forEach(p => {
+    grid.innerHTML += `
+      <div class="immunity-card">
+        <div class="immunity-initials">${p.i}</div>
+        <div class="immunity-role">${p.role}</div>
+        <div class="immunity-status"><div class="immunity-dot"></div> PROTECTED · ${p.joined}</div>
+      </div>`;
+  });
+
+  /* ── MODALS ──────────────────────────────────────────── */
+  function openModal(type) {
+    document.getElementById('modal-' + type).classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(type) {
+    document.getElementById('modal-' + type).classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      ['free','paid'].forEach(closeModal);
+    }
+  });
+
+  /* ── SCROLL REVEAL ───────────────────────────────────── */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
