@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -35,7 +36,6 @@
     overflow-x: hidden;
   }
 
-  /* ── NOISE TEXTURE OVERLAY ─────────────────────────────── */
   body::before {
     content: '';
     position: fixed;
@@ -45,7 +45,6 @@
     z-index: 0;
   }
 
-  /* ── NAV ───────────────────────────────────────────────── */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -119,7 +118,6 @@
   }
   .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
 
-  /* ── HERO ──────────────────────────────────────────────── */
   .hero {
     position: relative;
     min-height: 100vh;
@@ -201,7 +199,6 @@
     line-height: 1.7;
   }
 
-  /* ── THREAT COUNTER ────────────────────────────────────── */
   .threat-widget {
     display: inline-flex;
     align-items: stretch;
@@ -250,7 +247,6 @@
     font-weight: 400;
   }
 
-  /* ── CTA BUTTONS ───────────────────────────────────────── */
   .hero-ctas {
     display: flex;
     gap: 1rem;
@@ -310,7 +306,6 @@
   }
   .hero-disclaimer span { color: var(--mint); }
 
-  /* ── SECTION UTILS ─────────────────────────────────────── */
   section { position: relative; z-index: 1; }
 
   .section-eyebrow {
@@ -352,7 +347,6 @@
     background: linear-gradient(90deg, transparent, var(--border), transparent);
   }
 
-  /* ── HOW IT WORKS ──────────────────────────────────────── */
   .steps-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -381,11 +375,7 @@
     text-transform: uppercase;
   }
 
-  .step-icon {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    display: block;
-  }
+  .step-icon { font-size: 1.5rem; margin-bottom: 1rem; display: block; }
 
   .step-title {
     font-family: 'Space Grotesk', sans-serif;
@@ -397,7 +387,6 @@
 
   .step-body { font-size: 0.875rem; color: var(--sub); line-height: 1.7; }
 
-  /* ── PRICING ───────────────────────────────────────────── */
   .pricing-section { padding: 6rem 0; }
 
   .pricing-grid {
@@ -476,11 +465,7 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  .plan-divider {
-    height: 1px;
-    background: var(--border);
-    margin: 1.5rem 0;
-  }
+  .plan-divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
 
   .plan-feature {
     display: flex;
@@ -512,20 +497,11 @@
     text-decoration: none;
   }
 
-  .cta-free {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--sub);
-  }
+  .cta-free { background: transparent; border: 1px solid var(--border); color: var(--sub); }
   .cta-free:hover { border-color: var(--red); color: var(--red); }
-
-  .cta-paid {
-    background: var(--purple);
-    color: #fff;
-  }
+  .cta-paid { background: var(--purple); color: #fff; }
   .cta-paid:hover { background: var(--purple-lt); box-shadow: 0 6px 24px rgba(124,58,237,0.45); transform: translateY(-1px); }
 
-  /* ── WALL OF IMMUNITY ──────────────────────────────────── */
   .immunity-section { padding: 6rem 0; }
 
   .immunity-grid {
@@ -533,6 +509,7 @@
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 1rem;
     margin-top: 2.5rem;
+    min-height: 100px;
   }
 
   .immunity-card {
@@ -541,6 +518,11 @@
     border-radius: 10px;
     padding: 1.1rem 1.25rem;
     transition: all 0.2s;
+    animation: card-in 0.4s ease;
+  }
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
   .immunity-card:hover { border-color: rgba(6,239,168,0.3); background: rgba(6,239,168,0.04); }
 
@@ -552,11 +534,7 @@
     margin-bottom: 0.2rem;
   }
 
-  .immunity-role {
-    font-size: 0.72rem;
-    color: var(--muted);
-    margin-bottom: 0.5rem;
-  }
+  .immunity-role { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.5rem; }
 
   .immunity-status {
     display: inline-flex;
@@ -568,13 +546,28 @@
     color: var(--mint);
     letter-spacing: 0.08em;
   }
-  .immunity-dot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--mint);
+  .immunity-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--mint); }
+
+  .immunity-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
   }
 
-  /* ── FAQ ───────────────────────────────────────────────── */
+  .immunity-loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+  }
+
   .faq-section { padding: 6rem 0; }
 
   .faq-list {
@@ -591,10 +584,7 @@
     overflow: hidden;
   }
 
-  details {
-    background: var(--card);
-    transition: background 0.2s;
-  }
+  details { background: var(--card); transition: background 0.2s; }
   details[open] { background: var(--surface); }
   details + details { border-top: 1px solid var(--border); }
 
@@ -612,28 +602,11 @@
     letter-spacing: -0.01em;
   }
   summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; color: var(--muted); flex-shrink: 0; transition: transform 0.2s; }
+  details[open] summary::after { content: '−'; color: var(--purple-lt); }
 
-  summary::after {
-    content: '+';
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.2rem;
-    color: var(--muted);
-    flex-shrink: 0;
-    transition: transform 0.2s;
-  }
-  details[open] summary::after {
-    content: '−';
-    color: var(--purple-lt);
-  }
+  .faq-body { padding: 0 1.5rem 1.25rem; font-size: 0.875rem; color: var(--sub); line-height: 1.8; }
 
-  .faq-body {
-    padding: 0 1.5rem 1.25rem;
-    font-size: 0.875rem;
-    color: var(--sub);
-    line-height: 1.8;
-  }
-
-  /* ── MARQUEE TICKER ────────────────────────────────────── */
   .ticker-wrap {
     overflow: hidden;
     padding: 1rem 0;
@@ -653,12 +626,7 @@
   .ticker-wrap::before { left: 0; background: linear-gradient(90deg, var(--surface), transparent); }
   .ticker-wrap::after  { right: 0; background: linear-gradient(-90deg, var(--surface), transparent); }
 
-  .ticker-track {
-    display: flex;
-    gap: 3rem;
-    animation: marquee 28s linear infinite;
-    width: max-content;
-  }
+  .ticker-track { display: flex; gap: 3rem; animation: marquee 28s linear infinite; width: max-content; }
 
   @keyframes marquee {
     from { transform: translateX(0); }
@@ -679,7 +647,6 @@
   .ticker-item .sep { color: var(--border); }
   .ticker-item .accent { color: var(--mint); }
 
-  /* ── FOOTER ────────────────────────────────────────────── */
   footer {
     border-top: 1px solid var(--border);
     padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
@@ -690,22 +657,11 @@
     gap: 1rem;
   }
 
-  .footer-logo {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: -0.02em;
-  }
+  .footer-logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 0.9rem; letter-spacing: -0.02em; }
 
-  .footer-note {
-    font-size: 0.75rem;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    text-align: right;
-    line-height: 1.6;
-  }
+  .footer-note { font-size: 0.75rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; text-align: right; line-height: 1.6; }
 
-  /* ── MODAL ─────────────────────────────────────────────── */
+  /* ── MODALS ─────────────────────────────────────────────── */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -735,60 +691,47 @@
   }
 
   .modal-icon { font-size: 3rem; margin-bottom: 1rem; }
-  .modal-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    letter-spacing: -0.02em;
-  }
+  .modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 0.75rem; letter-spacing: -0.02em; }
   .modal-body { font-size: 0.875rem; color: var(--sub); line-height: 1.7; margin-bottom: 1.5rem; }
-  .modal-code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    padding: 0.75rem 1rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--mint);
-    margin-bottom: 1.5rem;
-    letter-spacing: 0.04em;
-  }
-  .modal-close {
-    background: var(--purple);
-    color: #fff;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: background 0.2s;
-  }
+  .modal-code { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--mint); margin-bottom: 1.5rem; letter-spacing: 0.04em; }
+  .modal-close { background: var(--purple); color: #fff; border: none; padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; }
   .modal-close:hover { background: var(--purple-lt); }
 
-  /* ── FREE TIER MODAL ───────────────────────────────────── */
   .modal.danger { border-color: rgba(255,69,88,0.4); }
   .modal.danger .modal-title { color: var(--red); }
   .modal.danger .modal-code { color: var(--red); border-color: rgba(255,69,88,0.3); }
   .modal.success { border-color: rgba(6,239,168,0.3); }
 
-  /* ── SCROLL ANIMATION ──────────────────────────────────── */
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+  /* ── CLAIM MODAL ─────────────────────────────────────────── */
+  .modal.claim { border-color: rgba(124,58,237,0.5); text-align: left; }
+  .claim-field { margin-bottom: 1rem; }
+  .claim-field label { display: block; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .claim-field input {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
   }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .claim-field input:focus { border-color: var(--purple); }
+  .claim-field input::placeholder { color: var(--muted); }
+  .claim-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; }
+  .claim-submit { width: 100%; margin-top: 1.25rem; padding: 13px; background: var(--mint); color: #08080E; font-weight: 700; font-size: 0.9rem; border: none; border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+  .claim-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+  .claim-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .claim-error { color: var(--red); font-size: 0.8rem; margin-top: 0.75rem; font-family: 'JetBrains Mono', monospace; display: none; }
+
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="nav-logo">
     <div class="logo-dot"></div>
@@ -803,50 +746,30 @@
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-glow"></div>
   <div class="hero-glow-2"></div>
-
   <div class="hero-eyebrow">Silence as a Service</div>
-
   <h1>The world's first<br /><em>inbox-shield utility.</em></h1>
-
-  <p class="hero-sub">
-    I have the coding skills to automate hundreds of AI-driven startup pitches directly to your inbox. For just $1, I will never use them.
-  </p>
-
+  <p class="hero-sub">I have the coding skills to automate hundreds of AI-driven startup pitches directly to your inbox. For just $1, I will never use them.</p>
   <div class="threat-widget">
-    <div class="threat-label">
-      <div class="threat-blink"></div>
-      Manifestos Queued
-    </div>
+    <div class="threat-label"><div class="threat-blink"></div>Manifestos Queued</div>
     <div class="threat-count">
       <span id="counter">0</span>
       <span class="threat-sub">targeting<br/>your inbox</span>
     </div>
   </div>
-
   <div class="hero-ctas">
-    <a href="https://www.paypal.com/ncp/payment/BE98S8RJWW5MU" class="btn-primary" target="_blank">
-      🛡️ Secure My Immunity for $1
-    </a>
-    <a href="#how-it-works" class="btn-secondary">
-      See what you're avoiding →
-    </a>
+    <a href="https://www.paypal.com/ncp/payment/BE98S8RJWW5MU" target="_blank" class="btn-primary">🛡️ Secure My Immunity for $1</a>
+    <a href="#how-it-works" class="btn-secondary">See what you're avoiding →</a>
   </div>
-
-  <p class="hero-disclaimer">
-    <span>✓</span> No pitch decks &nbsp;|&nbsp; <span>✓</span> No "quick calls" &nbsp;|&nbsp; <span>✓</span> No blockchain lawn mower updates
-  </p>
+  <p class="hero-disclaimer"><span>✓</span> No pitch decks &nbsp;|&nbsp; <span>✓</span> No "quick calls" &nbsp;|&nbsp; <span>✓</span> No blockchain lawn mower updates</p>
 </section>
 
-<!-- TICKER -->
 <div class="ticker-wrap">
   <div class="ticker-track" id="ticker"></div>
 </div>
 
-<!-- HOW IT WORKS -->
 <section id="how-it-works" class="pad">
   <div class="container">
     <div class="reveal">
@@ -879,7 +802,6 @@
 
 <div class="divider"></div>
 
-<!-- PRICING -->
 <section id="pricing" class="pricing-section">
   <div class="container">
     <div class="reveal" style="text-align:center; margin-bottom:0;">
@@ -888,92 +810,51 @@
       <p class="section-sub" style="margin:0 auto;">We keep the pricing transparent. One option costs $0. The other costs $1. The math is not complicated.</p>
     </div>
     <div class="pricing-grid reveal">
-
-      <!-- FREE TIER -->
       <div class="pricing-card">
         <div class="plan-name">Free Tier</div>
         <div class="plan-price free"><sup>$</sup>0</div>
         <div class="plan-period">/ rest of 2026</div>
-
         <div class="plan-divider"></div>
-
-        <div class="plan-feature">
-          <span class="feature-icon no">✗</span>
-          <span>Eligible for 4,000-word manifesto on blockchain lawn mowers</span>
-        </div>
-        <div class="plan-feature">
-          <span class="feature-icon no">✗</span>
-          <span>Weekly AI-generated pitch decks with Comic Sans slide titles</span>
-        </div>
-        <div class="plan-feature">
-          <span class="feature-icon no">✗</span>
-          <span>LinkedIn connection request with custom "thought leadership" message</span>
-        </div>
-        <div class="plan-feature">
-          <span class="feature-icon no">✗</span>
-          <span>Surprise "quick 15-minute call" invites on Friday afternoons</span>
-        </div>
-        <div class="plan-feature">
-          <span class="feature-icon no">✗</span>
-          <span>NFT whitepaper for a startup called PetRock.io (20 pages)</span>
-        </div>
-
+        <div class="plan-feature"><span class="feature-icon no">✗</span><span>Eligible for 4,000-word manifesto on blockchain lawn mowers</span></div>
+        <div class="plan-feature"><span class="feature-icon no">✗</span><span>Weekly AI-generated pitch decks with Comic Sans slide titles</span></div>
+        <div class="plan-feature"><span class="feature-icon no">✗</span><span>LinkedIn connection request with custom "thought leadership" message</span></div>
+        <div class="plan-feature"><span class="feature-icon no">✗</span><span>Surprise "quick 15-minute call" invites on Friday afternoons</span></div>
+        <div class="plan-feature"><span class="feature-icon no">✗</span><span>NFT whitepaper for a startup called PetRock.io (20 pages)</span></div>
         <button class="plan-cta cta-free" onclick="openModal('free')">Remain Unprotected</button>
       </div>
-
-      <!-- PREMIUM -->
       <div class="pricing-card featured">
         <div class="plan-name">Premium Immunity</div>
         <div class="plan-price paid"><sup>$</sup>1</div>
         <div class="plan-period">/ one-time payment</div>
-
         <div class="plan-divider"></div>
-
-        <div class="plan-feature">
-          <span class="feature-icon yes">✓</span>
-          <span>Permanent removal from all manifesto delivery queues</span>
-        </div>
-        <div class="plan-feature">
-          <span class="feature-icon yes">✓</span>
-          <span>Zero LinkedIn activity directed at your profile. Guaranteed.</span>
-        </div>
-        <div class="plan-feature">
-          <span class="feature-icon yes">✓</span>
-          <span>No pitch decks, cold emails, or "ecosystem synergy" vocabulary</span>
-        </div>
-        <div class="plan-feature">
-          <span class="feature-icon yes">✓</span>
-          <span>Immunity certificate with your name on it (real PDF, actual joke)</span>
-        </div>
-        <div class="plan-feature">
-          <span class="feature-icon yes">✓</span>
-          <span>Eternal digital silence. Enforced at the SMTP level.</span>
-        </div>
-
+        <div class="plan-feature"><span class="feature-icon yes">✓</span><span>Permanent removal from all manifesto delivery queues</span></div>
+        <div class="plan-feature"><span class="feature-icon yes">✓</span><span>Zero LinkedIn activity directed at your profile. Guaranteed.</span></div>
+        <div class="plan-feature"><span class="feature-icon yes">✓</span><span>No pitch decks, cold emails, or "ecosystem synergy" vocabulary</span></div>
+        <div class="plan-feature"><span class="feature-icon yes">✓</span><span>Immunity certificate with your name on it (real PDF, actual joke)</span></div>
+        <div class="plan-feature"><span class="feature-icon yes">✓</span><span>Eternal digital silence. Enforced at the SMTP level.</span></div>
         <button class="plan-cta cta-paid" onclick="openModal('paid')">Secure My Immunity — $1</button>
       </div>
-
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- WALL OF IMMUNITY -->
 <section id="wall" class="immunity-section">
   <div class="container">
     <div class="reveal">
       <div class="section-eyebrow">Wall of Immunity</div>
       <div class="section-title">Protected. At last.</div>
-      <p class="section-sub">These individuals made the rational decision. Their inboxes rest easy.</p>
+      <p class="section-sub">These individuals made the rational decision. Their inboxes rest easy. <br/><span style="color:var(--purple-lt);font-size:0.85rem;">After paying, claim your spot below.</span></p>
     </div>
-    <div class="immunity-grid reveal" id="immunity-grid"></div>
+    <div class="immunity-grid reveal" id="immunity-grid">
+      <div class="immunity-loading">// fetching protected list...</div>
+    </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- FAQ -->
 <section class="faq-section">
   <div class="container">
     <div class="reveal" style="text-align:center;">
@@ -1009,46 +890,173 @@
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-logo">SaaS™ — Silence as a Service</div>
-  <div class="footer-note">
-    No VCs were harmed in the making of this website.<br />
-    © 2026 · Chief Immunity Officer · Est. One Weekend
-  </div>
+  <div class="footer-note">No VCs were harmed in the making of this website.<br />© 2026 · Chief Immunity Officer · Est. One Weekend</div>
 </footer>
 
-<!-- MODALS -->
+<!-- FREE TIER MODAL -->
 <div class="modal-overlay" id="modal-free" onclick="if(event.target===this)closeModal('free')">
   <div class="modal danger">
     <div class="modal-icon">⚠️</div>
     <div class="modal-title">Unprotected Status Confirmed</div>
-    <div class="modal-body">You have elected to remain on the Free Tier. This is your choice. I respect it. <br/><br/>The GrassMint™ whitepaper will arrive Tuesday. It is 31 pages. There are diagrams.</div>
+    <div class="modal-body">You have elected to remain on the Free Tier. This is your choice. I respect it.<br/><br/>The GrassMint™ whitepaper will arrive Tuesday. It is 31 pages. There are diagrams.</div>
     <div class="modal-code">STATUS: THREAT_LEVEL_MAXIMUM // manifesto_queue.push(you)</div>
-    <button class="modal-close" onclick="closeModal('free'); document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">
-      Wait — I Changed My Mind
-    </button>
+    <button class="modal-close" onclick="closeModal('free'); document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Wait — I Changed My Mind</button>
   </div>
 </div>
 
+<!-- PAID MODAL -->
 <div class="modal-overlay" id="modal-paid" onclick="if(event.target===this)closeModal('paid')">
   <div class="modal success">
     <div class="modal-icon">🛡️</div>
     <div class="modal-title">Immunity Secured</div>
-    <div class="modal-body">An excellent, rational, $1 decision. You will now be redirected to a payment page where you can complete your protection. Your name will be added to the Wall of Immunity within 24 hours.</div>
+    <div class="modal-body">An excellent, rational, $1 decision. You will be redirected to PayPal to complete your protection. After paying, return here to claim your spot on the Wall of Immunity.</div>
     <div class="modal-code">STATUS: PROTECTED // manifesto_queue.remove(you)</div>
-    <button class="modal-close" onclick="closeModal('paid'); window.open('https://www.paypal.com/ncp/payment/BE98S8RJWW5MU', '_blank')">
-      Complete Payment — $1
-    </button>
+    <button class="modal-close" onclick="closeModal('paid'); window.open('https://www.paypal.com/ncp/payment/BE98S8RJWW5MU', '_blank')">Complete Payment — $1</button>
+  </div>
+</div>
+
+<!-- CLAIM MODAL (shows after PayPal returns with ?paid=true) -->
+<div class="modal-overlay" id="modal-claim">
+  <div class="modal claim">
+    <div class="modal-icon" style="text-align:center;">🎖️</div>
+    <div class="modal-title" style="text-align:center; color: var(--mint);">Claim Your Spot</div>
+    <div class="modal-body" style="text-align:center; margin-bottom:1.5rem;">Payment confirmed. Add yourself to the public Wall of Immunity.</div>
+    <div class="claim-field">
+      <label>Your Initials</label>
+      <input type="text" id="claim-initials" placeholder="e.g. J.D." maxlength="10" />
+      <div class="claim-hint">First and last initial — keeps it anonymous</div>
+    </div>
+    <div class="claim-field">
+      <label>Your Role / Title</label>
+      <input type="text" id="claim-role" placeholder="e.g. Angel Investor, Founder, VC Partner" maxlength="60" />
+    </div>
+    <div class="claim-error" id="claim-error"></div>
+    <button class="claim-submit" id="claim-submit" onclick="submitClaim()">Add Me to the Wall →</button>
+  </div>
+</div>
+
+<!-- SUCCESS CLAIM MODAL -->
+<div class="modal-overlay" id="modal-claimed" onclick="if(event.target===this)closeModal('claimed')">
+  <div class="modal success">
+    <div class="modal-icon">✅</div>
+    <div class="modal-title">You're on the Wall.</div>
+    <div class="modal-body">Your immunity is now publicly confirmed. The manifesto has been permanently rerouted away from your inbox. You may rest easy.</div>
+    <div class="modal-code">STATUS: WALL_ENTRY_CONFIRMED // threat_level = 0</div>
+    <button class="modal-close" onclick="closeModal('claimed')">Close</button>
   </div>
 </div>
 
 <script>
-  /* ── THREAT COUNTER ──────────────────────────────────── */
+  /* ── SUPABASE ─────────────────────────────────────────── */
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://vrxzqxtcajzfedebajeq.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyeHpxeHRjYWp6ZmVkZWJhamVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwNDc4MjcsImV4cCI6MjA5ODYyMzgyN30.4uvF6-iv7fvaBgKXIpfUNK8Monk_3EY1LsZpg55ZUPo'
+  );
+
+  /* ── LOAD WALL ────────────────────────────────────────── */
+  async function loadWall() {
+    const grid = document.getElementById('immunity-grid');
+    try {
+      const { data, error } = await sb
+        .from('immunity_wall')
+        .select('initials, role, created_at')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      grid.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        grid.innerHTML = '<div class="immunity-empty">// No entries yet. Be the first protected soul.</div>';
+        return;
+      }
+
+      data.forEach(p => {
+        const ago = timeAgo(p.created_at);
+        grid.innerHTML += `
+          <div class="immunity-card">
+            <div class="immunity-initials">${esc(p.initials)}</div>
+            <div class="immunity-role">${esc(p.role)}</div>
+            <div class="immunity-status"><div class="immunity-dot"></div> PROTECTED · ${ago}</div>
+          </div>`;
+      });
+    } catch (e) {
+      grid.innerHTML = '<div class="immunity-empty">// Could not load wall. Database is presumably also protected.</div>';
+    }
+  }
+
+  /* ── SUBMIT CLAIM ─────────────────────────────────────── */
+  async function submitClaim() {
+    const initials = document.getElementById('claim-initials').value.trim();
+    const role     = document.getElementById('claim-role').value.trim();
+    const errEl    = document.getElementById('claim-error');
+    const btn      = document.getElementById('claim-submit');
+    errEl.style.display = 'none';
+
+    if (!initials || !role) {
+      errEl.textContent = '// Both fields required.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    try {
+      const { error } = await sb
+        .from('immunity_wall')
+        .insert([{ initials, role }]);
+
+      if (error) throw error;
+
+      closeModal('claim');
+      openModal('claimed');
+      loadWall();
+
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } catch (e) {
+      errEl.textContent = '// Submission failed. Try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Add Me to the Wall →';
+    }
+  }
+
+  /* ── TIME AGO ─────────────────────────────────────────── */
+  function timeAgo(ts) {
+    const diff = Date.now() - new Date(ts).getTime();
+    const m = Math.floor(diff / 60000);
+    if (m < 60)  return m <= 1 ? 'just now' : `${m}m ago`;
+    const h = Math.floor(m / 60);
+    if (h < 24)  return `${h}h ago`;
+    const d = Math.floor(h / 24);
+    if (d < 7)   return `${d}d ago`;
+    const w = Math.floor(d / 7);
+    if (w < 5)   return `${w}w ago`;
+    return `${Math.floor(d/30)}mo ago`;
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── CHECK ?paid=true ─────────────────────────────────── */
+  window.addEventListener('DOMContentLoaded', () => {
+    loadWall();
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('paid') === 'true') {
+      setTimeout(() => openModal('claim'), 800);
+    }
+  });
+
+  /* ── THREAT COUNTER ───────────────────────────────────── */
   const target = 1247 + Math.floor(Math.random() * 300);
   const el = document.getElementById('counter');
   let current = Math.floor(target * 0.6);
-
   const tick = () => {
     if (current < target) {
       current += Math.floor(Math.random() * 3) + 1;
@@ -1058,14 +1066,12 @@
     }
   };
   setTimeout(tick, 600);
-
-  // Slow drip after initial count-up
   setInterval(() => {
     const n = parseInt(el.textContent.replace(/,/g, ''));
     el.textContent = (n + 1).toLocaleString();
   }, 4800);
 
-  /* ── TICKER ──────────────────────────────────────────── */
+  /* ── TICKER ───────────────────────────────────────────── */
   const items = [
     { label: 'GrassMint™ Whitepaper', note: '31 pages · Queued' },
     { label: 'PetRock.io NFT Drop', note: 'Series A · Imminent' },
@@ -1077,43 +1083,15 @@
     { label: 'DAO for Breakfast', note: 'Governance · Draft' },
     { label: 'DeFi Lawn Care', note: 'Series Seed · $0 raised' },
   ];
-
   const track = document.getElementById('ticker');
-  const doubled = [...items, ...items]; // seamless loop
-  doubled.forEach(item => {
+  [...items, ...items].forEach(item => {
     const div = document.createElement('div');
     div.className = 'ticker-item';
     div.innerHTML = `<span class="accent">▸</span>${item.label}<span class="sep">|</span>${item.note}`;
     track.appendChild(div);
   });
 
-  /* ── WALL OF IMMUNITY ────────────────────────────────── */
-  const protected_list = [
-    { i: 'M.A.', role: 'Seed Investor', joined: '3d ago' },
-    { i: 'P.G.',  role: 'Y Combinator Partner', joined: '5d ago' },
-    { i: 'S.H.',  role: 'Angel Investor', joined: '1w ago' },
-    { i: 'B.C.',  role: 'Tech Founder', joined: '1w ago' },
-    { i: 'R.K.',  role: 'VC Partner', joined: '2w ago' },
-    { i: 'A.V.',  role: 'General Partner', joined: '2w ago' },
-    { i: 'T.N.',  role: 'Crypto Creator', joined: '2w ago' },
-    { i: 'J.L.',  role: 'Former CTO', joined: '3w ago' },
-    { i: 'D.M.',  role: 'Angel / Operator', joined: '3w ago' },
-    { i: 'K.S.',  role: 'Founder & CEO', joined: '1mo ago' },
-    { i: 'E.W.',  role: 'Managing Partner', joined: '1mo ago' },
-    { i: 'C.R.',  role: 'Portfolio Company', joined: '1mo ago' },
-  ];
-
-  const grid = document.getElementById('immunity-grid');
-  protected_list.forEach(p => {
-    grid.innerHTML += `
-      <div class="immunity-card">
-        <div class="immunity-initials">${p.i}</div>
-        <div class="immunity-role">${p.role}</div>
-        <div class="immunity-status"><div class="immunity-dot"></div> PROTECTED · ${p.joined}</div>
-      </div>`;
-  });
-
-  /* ── MODALS ──────────────────────────────────────────── */
+  /* ── MODALS ───────────────────────────────────────────── */
   function openModal(type) {
     document.getElementById('modal-' + type).classList.add('active');
     document.body.style.overflow = 'hidden';
@@ -1123,21 +1101,13 @@
     document.body.style.overflow = '';
   }
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      ['free','paid'].forEach(closeModal);
-    }
+    if (e.key === 'Escape') ['free','paid','claimed'].forEach(closeModal);
   });
 
-  /* ── SCROLL REVEAL ───────────────────────────────────── */
+  /* ── SCROLL REVEAL ────────────────────────────────────── */
   const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        obs.unobserve(e.target);
-      }
-    });
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
   }, { threshold: 0.1 });
-
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
 </body>
